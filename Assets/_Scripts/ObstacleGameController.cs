@@ -22,6 +22,7 @@ public class ObstacleGameController : MonoBehaviour
     {
         GameManager.Instance.isGameOver = false;
         GameManager.Instance.score = 0;
+        GameManager.Instance.comboCount = 0;
         UnityEngine.SceneManagement.SceneManager.LoadScene("StartScene");
     }
 }

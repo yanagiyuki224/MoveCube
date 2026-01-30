@@ -1,16 +1,26 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum ObstacleType
 {
-    Point,
+    Apple,
+    PinkApple,
     Obstacle
+}
+
+[System.Serializable]
+public class ObstacleData
+{
+    public ObstacleType obstacleType;
+    public GameObject obstacleObject;
+    public int score;
 }
 public class ObstacleController : MonoBehaviour
 {
+    [SerializeField]public List<ObstacleData> obstacleDataList;
     public ObstacleType obstacleType;
     public Renderer cachedRenderer;
-    public Color pointColor = Color.lightBlue;
-    public Color obstacleColor = Color.purple;
+    public int scoreValue = 10;
     public void Awake()
     {
         cachedRenderer = GetComponent<Renderer>();
@@ -19,14 +29,17 @@ public class ObstacleController : MonoBehaviour
     public void Setup(ObstacleType type)
     {
         obstacleType = type;
-        switch (type)
+        foreach (var data in obstacleDataList)
         {
-            case ObstacleType.Point:
-                cachedRenderer.material.color = pointColor;
-                break;
-            case ObstacleType.Obstacle:
-                cachedRenderer.material.color = obstacleColor;
-                break;
+            if (data.obstacleType == obstacleType)
+            {
+                data.obstacleObject.SetActive(true);
+                scoreValue = data.score;
+            }
+            else
+            {
+                data.obstacleObject.SetActive(false);
+            }
         }
     }
 

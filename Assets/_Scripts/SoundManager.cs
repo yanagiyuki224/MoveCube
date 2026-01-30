@@ -20,10 +20,14 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
     public AudioSource seAudioSource;
     public AudioSource bgmAudioSource;
     public AudioMixer bgmAudioMixer;
+    public AudioMixer seAudioMixer;
     private const string SePath = "_SE/";
     private const string BgmPath = "_BGM/";
     public float seVolume = 1;
     public float bgmVolume = 1;
+    float basePitch = 1.0f;
+    float maxPitch = 2.0f;
+    float pitchStep = 0.05f;
     protected override void Awake()
     {
         base.Awake();
@@ -39,6 +43,10 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
         if (bgmAudioMixer == null)
         {
             bgmAudioMixer = Resources.Load<AudioMixer>("_BGM/BGMMixer");
+        }
+        if (seAudioMixer == null)
+        {
+            seAudioMixer = Resources.Load<AudioMixer>("_SE/SEMixer");
         }
         int count = System.Enum.GetValues(typeof(SEType)).Length;
         for (int i = 0; i < count; i++)
@@ -74,11 +82,41 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
     }
     public void PlaySE(SEType type)
     {
-        if (!seClipMap.ContainsKey(type))
-            return;
+        if (!seClipMap.ContainsKey(type)) return;
 
         AudioClip clip = seClipMap[type];
+        string groupName = type.ToString();
+        AudioMixerGroup[] groups = seAudioMixer.FindMatchingGroups(groupName);
+
+        if (groups.Length > 0)
+        {
+            seAudioSource.outputAudioMixerGroup = groups[0];
+
+            // --- コンボピッチの制御ロジック ---
+            if (type == SEType.Acquisition)
+            {
+                // Acquisitionの時だけコンボ数に応じたピッチを設定
+                float newPitch = basePitch + ((GameManager.Instance.comboCount - 1) * pitchStep);
+                seAudioMixer.SetFloat("ComboPitch", Mathf.Min(newPitch, maxPitch));
+            }
+            else
+            {
+                // それ以外のSE（Damageなど）の時はピッチを標準(1.0)に戻す
+                // ※ミキサー全体ではなく "ComboPitch" パラメータをリセット
+                seAudioMixer.SetFloat("ComboPitch", 1.0f);
+            }
+            // ----------------------------------
+        }
+        else
+        {
+            Debug.LogWarning($"AudioMixerGroup not found: {groupName}");
+            return; // ミキサーグループが見つからない場合は何もしない
+        }
         seAudioSource.PlayOneShot(clip);
+    }
+    public void ResetSEComboPitch()
+    {
+        seAudioMixer.SetFloat("ComboPitch", 1.0f);
     }
     public void PlayBGM(BGMType type)
     {

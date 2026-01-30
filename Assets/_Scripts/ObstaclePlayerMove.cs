@@ -72,20 +72,24 @@ public class ObstaclePlayerMove : MonoBehaviour
                 health--;
                 SoundManager.Instance.PlaySE(SEType.Damage);
                 uiController.DamageEffect(health);
+                GameManager.Instance.comboCount = 0;
+                SpeedDown();
                 if (health <= 0)
                 {
                     GameManager.Instance.Ranking(uiController);
                     GameManager.Instance.isGameOver = true;
+                    SoundManager.Instance.ResetSEComboPitch();
                     uiController.ShowGameOver();
                     gameObject.SetActive(false);
                 }
             }
-            else if (obstacle.obstacleType == ObstacleType.Point)
+            else
             {
+                GameManager.Instance.comboCount++;
                 // ポイント取得の処理
-                GameManager.Instance.AddScore(uiController, 10);
+                GameManager.Instance.AddScore(uiController, obstacle.scoreValue);
                 SoundManager.Instance.PlaySE(SEType.Acquisition);
-                if (GameManager.Instance.score % 50 == 0)
+                if (GameManager.Instance.comboCount % 5 == 0)
                 {
                     SpeedUp();
                 }
@@ -98,6 +102,11 @@ public class ObstaclePlayerMove : MonoBehaviour
     {
         forwardSpeed += 2f;
         laneMoveSpeed += 2f;
+    }
+    void SpeedDown()
+    {
+        forwardSpeed = Mathf.Max(10f, forwardSpeed - 2f);
+        laneMoveSpeed = Mathf.Max(12f, laneMoveSpeed - 2f);
     }
     public void ResetPlayer()
     {

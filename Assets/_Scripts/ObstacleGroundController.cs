@@ -58,7 +58,15 @@ public class ObstacleGroundController : MonoBehaviour
         if (shouldSpawnPoint && availableLanes.Count > 0)
         {
             int index = GetRandomLane(availableLanes);
-            ActivateObjectAtLane(index, ObstacleType.Point); // ポイントとして起動
+            float pointTypeRoll = Random.value;
+            if (pointTypeRoll < 0.7f)
+            {
+                ActivateObjectAtLane(index, ObstacleType.PinkApple);
+            }
+            else
+            {
+                ActivateObjectAtLane(index, ObstacleType.Apple);
+            }
         }
     }
 

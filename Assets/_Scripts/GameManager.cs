@@ -13,6 +13,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     public bool isGameOver = false;
     public int highScore = 0;
     public int ObstacleHighScore = 0;
+    public int comboCount = 0;
     public GameMode gameMode = GameMode.Normal;
     public Dictionary<Type, Color> typeColorMap = new Dictionary<Type, Color>()
     {
@@ -34,8 +35,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     }
     public void ResetScore(UIController uiController)
     {
-
-
+        comboCount = 0;
         score = 0;
         uiController.highScoreText.SetActive(false);
         uiController.gameOverPanel.SetActive(false);
@@ -49,14 +49,11 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
             {
                 PlayerPrefs.SetInt("OBSTACLEHIGHSCORE", score);
                 PlayerPrefs.Save(); // 確実に保存を実行
-                UnityroomApiClient.Instance.SendScore(2, score, ScoreboardWriteMode.HighScoreDesc);
                 ObstacleHighScore = score;
                 uiController.UpdateHighScore();
             }
-            else
+            if(UnityroomApiClient.Instance != null)
             {
-                // スコアが更新されなかった場合も、現在のスコアを送信したい場合はここに記述
-                // (ランキングの仕様によりますが、毎回送るのが一般的です)
                 UnityroomApiClient.Instance.SendScore(2, (float)score, ScoreboardWriteMode.HighScoreDesc);
             }
             return;
@@ -65,16 +62,13 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         {
             if (score > highScore)
             {
-                PlayerPrefs.SetInt("HIGHSCORE", highScore);
+                PlayerPrefs.SetInt("HIGHSCORE", score);
                 PlayerPrefs.Save(); // 確実に保存を実行
-                UnityroomApiClient.Instance.SendScore(1, score, ScoreboardWriteMode.HighScoreDesc);
                 highScore = score;
                 uiController.UpdateHighScore();
             }
-            else
+            if(UnityroomApiClient.Instance != null)
             {
-                // スコアが更新されなかった場合も、現在のスコアを送信したい場合はここに記述
-                // (ランキングの仕様によりますが、毎回送るのが一般的です)
                 UnityroomApiClient.Instance.SendScore(1, (float)score, ScoreboardWriteMode.HighScoreDesc);
             }
         }
