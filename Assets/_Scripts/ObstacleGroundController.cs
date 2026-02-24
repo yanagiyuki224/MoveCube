@@ -8,8 +8,9 @@ public class ObstacleGroundController : MonoBehaviour
     [SerializeField] private GameObject obstaclesPrefab;
     [SerializeField] private ObstacleController[] obstacles;
 
-    float pointSpawn = 0.5f;
+    float pointSpawn = 0.7f;
     float obstacleSpawn = 0.85f;
+    float speedDownSpawn = 0.1f;
 
     void Awake()
     {
@@ -40,6 +41,8 @@ public class ObstacleGroundController : MonoBehaviour
 
         bool shouldSpawnPoint = Random.value < pointSpawn;
         bool shouldSpawnObstacle = Random.value < obstacleSpawn;
+        bool isSpeedDownSpawn = Random.value < speedDownSpawn;
+
 
         // 2. 障害物の配置
         if (shouldSpawnObstacle)
@@ -51,6 +54,20 @@ public class ObstacleGroundController : MonoBehaviour
             {
                 int index = GetRandomLane(availableLanes);
                 ActivateObjectAtLane(index, ObstacleType.Obstacle);
+            }
+        }
+
+        if(isSpeedDownSpawn && availableLanes.Count > 1 && GameManager.Instance.score > 300)
+        {
+            int index = GetRandomLane(availableLanes);
+            float speedDownTypeRoll = Random.value;
+            if (speedDownTypeRoll < 0.6f)
+            {
+                ActivateObjectAtLane(index, ObstacleType.SpeedDownApple);
+            }
+            else
+            {
+                ActivateObjectAtLane(index, ObstacleType.SpeedDownItem);
             }
         }
 

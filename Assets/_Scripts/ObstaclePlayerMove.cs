@@ -83,6 +83,25 @@ public class ObstaclePlayerMove : MonoBehaviour
                     gameObject.SetActive(false);
                 }
             }
+            else if (obstacle.obstacleType == ObstacleType.SpeedDownApple)
+            {
+                GameManager.Instance.comboCount++;
+                GameManager.Instance.AddScore(uiController, obstacle.scoreValue);
+                SoundManager.Instance.PlaySE(SEType.Acquisition);
+                SpeedDown();
+                if (GameManager.Instance.comboCount % 5 == 0)
+                {
+                    SpeedUp();
+                }
+
+            }
+            else if (obstacle.obstacleType == ObstacleType.SpeedDownItem)
+            {
+                GameManager.Instance.comboCount = 0;
+                GameManager.Instance.AddScore(uiController, obstacle.scoreValue);
+                SoundManager.Instance.PlaySE(SEType.Damage);
+                SpeedDown();
+            }
             else
             {
                 GameManager.Instance.comboCount++;
@@ -95,7 +114,7 @@ public class ObstaclePlayerMove : MonoBehaviour
                 }
             }
             other.gameObject.SetActive(false);
-            
+
         }
     }
     void SpeedUp()

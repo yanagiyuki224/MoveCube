@@ -5,7 +5,9 @@ public enum ObstacleType
 {
     Apple,
     PinkApple,
-    Obstacle
+    Obstacle,
+    SpeedDownApple,
+    SpeedDownItem
 }
 
 [System.Serializable]
