@@ -12,9 +12,12 @@ public class ObstacleGameController : MonoBehaviour
 
     public void RestartGame()
     {
+        GameManager.Instance.score = 0;
+        GameManager.Instance.comboCount = 0;
+        playerMove.ResetPlayer();
         groundManager.ResetGround();
         GameManager.Instance.isGameOver = false;
-        playerMove.ResetPlayer();
+        
 
 
     }

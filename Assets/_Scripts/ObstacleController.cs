@@ -7,7 +7,8 @@ public enum ObstacleType
     PinkApple,
     Obstacle,
     SpeedDownApple,
-    SpeedDownItem
+    SpeedDownItem,
+    HealApple
 }
 
 [System.Serializable]

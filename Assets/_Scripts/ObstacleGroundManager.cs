@@ -5,11 +5,15 @@ public class ObstacleGroundManager : MonoBehaviour
     [SerializeField] Transform[] obstacleGrounds;
     [SerializeField] private ObstacleGroundController[] obstacleGroundControllers;
     [SerializeField] private Transform player;
+    private ObstaclePlayerMove playerMove; // プレイヤーのスクリプトへの参照
     [SerializeField] float groundLength = 8f;
     private int nextIndex;
     private float nextZ;
+    
+
     void Awake()
     {
+        playerMove = player.GetComponent<ObstaclePlayerMove>();
         nextIndex = 0;
 
         // 配列のサイズを Obstacle Grounds に合わせる
@@ -32,7 +36,7 @@ public class ObstacleGroundManager : MonoBehaviour
         {
             if (i >= 4)
             {
-                obstacleGroundControllers[i].ActivateObstacle();
+                obstacleGroundControllers[i].ActivateObstacle(playerMove);
             }
 
         }
@@ -53,7 +57,7 @@ public class ObstacleGroundManager : MonoBehaviour
 
         // 前へ移動
         ground.position = new Vector3(0f, -1f, nextZ);
-        obstacleGroundControllers[nextIndex].ActivateObstacle();
+        obstacleGroundControllers[nextIndex].ActivateObstacle(playerMove);
 
         nextZ += groundLength;
         nextIndex++;
@@ -83,7 +87,7 @@ public class ObstacleGroundManager : MonoBehaviour
             // 最初の4枚 (0,1,2,3) は何もしない、4枚目以降だけ玉を出す
             if (i >= 4)
             {
-                obstacleGroundControllers[i].ActivateObstacle();
+                obstacleGroundControllers[i].ActivateObstacle(playerMove);
             }
         }
     }

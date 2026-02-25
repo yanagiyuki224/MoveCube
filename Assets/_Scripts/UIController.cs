@@ -35,12 +35,12 @@ public class UIController : MonoBehaviour
         
         highScoreText.SetActive(true);
     }
-    public void DamageEffect(int currentHealth)
+    public void HealthEffect(int currentHealth)
     {
         if(GameManager.Instance.gameMode != GameMode.ObstacleMode)
             return;
         // Implement damage effect logic here
-        Debug.Log("Damage Effect Triggered");
+        Debug.Log("Health Effect Triggered");
         for (int i = 0; i < heartIcons.Length; i++)
         {
             if (i < currentHealth)

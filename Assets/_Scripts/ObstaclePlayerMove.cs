@@ -10,6 +10,11 @@ public class ObstaclePlayerMove : MonoBehaviour
     public PlayerPosition CurrentPosition { get; private set; } = PlayerPosition.Center;
     private float targetX; // 目標X（キャッシュ）
     private int health = 3;
+    public int Health
+    {
+        get { return health; }
+        private set { health = value; }
+    }
     public UIController uiController; // UIControllerへの参照
     void Awake()
     {
@@ -71,7 +76,7 @@ public class ObstaclePlayerMove : MonoBehaviour
             {
                 health--;
                 SoundManager.Instance.PlaySE(SEType.Damage);
-                uiController.DamageEffect(health);
+                uiController.HealthEffect(health);
                 GameManager.Instance.comboCount = 0;
                 SpeedDown();
                 if (health <= 0)
@@ -102,6 +107,18 @@ public class ObstaclePlayerMove : MonoBehaviour
                 SoundManager.Instance.PlaySE(SEType.Damage);
                 SpeedDown();
             }
+            else if (obstacle.obstacleType == ObstacleType.HealApple)
+            {
+                health = Mathf.Min(3, health + 1);
+                uiController.HealthEffect(health);
+                GameManager.Instance.comboCount++;
+                GameManager.Instance.AddScore(uiController, obstacle.scoreValue);
+                SoundManager.Instance.PlaySE(SEType.Acquisition);
+                if (GameManager.Instance.comboCount % 5 == 0)
+                {
+                    SpeedUp();
+                }
+            }
             else
             {
                 GameManager.Instance.comboCount++;
@@ -129,13 +146,14 @@ public class ObstaclePlayerMove : MonoBehaviour
     }
     public void ResetPlayer()
     {
+        health = 3;
+        uiController.ResetHearts();
         // 位置リセット
         transform.position = new Vector3(0f, 0.5f, 0f);
         rb.linearVelocity = Vector3.zero;
         CurrentPosition = PlayerPosition.Center;
         targetX = 0f;
-        health = 3;
-        uiController.ResetHearts();
+        
 
         // 速度リセット
         forwardSpeed = 10f;

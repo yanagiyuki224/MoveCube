@@ -14,11 +14,12 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     public int highScore = 0;
     public int ObstacleHighScore = 0;
     public int comboCount = 0;
+    public bool isHealAppleSpawned = false;
     public GameMode gameMode = GameMode.Normal;
     public Dictionary<Type, Color> typeColorMap = new Dictionary<Type, Color>()
     {
-        { Type.Red, Color.red },
-        { Type.Pink, Color.pink },
+        { Type.Red, Color.yellow },
+        { Type.Pink, Color.red },
         { Type.Green, Color.green }
     };
     public int score = 0;

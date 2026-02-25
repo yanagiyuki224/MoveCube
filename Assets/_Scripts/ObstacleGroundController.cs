@@ -8,9 +8,12 @@ public class ObstacleGroundController : MonoBehaviour
     [SerializeField] private GameObject obstaclesPrefab;
     [SerializeField] private ObstacleController[] obstacles;
 
+    public bool isHealAppleSpawned = false;
+
     float pointSpawn = 0.7f;
     float obstacleSpawn = 0.85f;
     float speedDownSpawn = 0.1f;
+    float healSpawn = 0.1f;
 
     void Awake()
     {
@@ -28,7 +31,7 @@ public class ObstacleGroundController : MonoBehaviour
         }
     }
 
-    public void ActivateObstacle()
+    public void ActivateObstacle(ObstaclePlayerMove playerMove)
     {
         Clear();
 
@@ -42,6 +45,7 @@ public class ObstacleGroundController : MonoBehaviour
         bool shouldSpawnPoint = Random.value < pointSpawn;
         bool shouldSpawnObstacle = Random.value < obstacleSpawn;
         bool isSpeedDownSpawn = Random.value < speedDownSpawn;
+        bool isHealSpawn = Random.value < healSpawn;
 
 
         // 2. 障害物の配置
@@ -57,18 +61,26 @@ public class ObstacleGroundController : MonoBehaviour
             }
         }
 
-        if(isSpeedDownSpawn && availableLanes.Count > 1 && GameManager.Instance.score > 300)
+        if(isSpeedDownSpawn && availableLanes.Count > 1 && GameManager.Instance.score > 200)
         {
             int index = GetRandomLane(availableLanes);
             float speedDownTypeRoll = Random.value;
-            if (speedDownTypeRoll < 0.6f)
-            {
-                ActivateObjectAtLane(index, ObstacleType.SpeedDownApple);
-            }
-            else
+            if (speedDownTypeRoll < 0.7f)
             {
                 ActivateObjectAtLane(index, ObstacleType.SpeedDownItem);
             }
+            else
+            {
+                ActivateObjectAtLane(index, ObstacleType.SpeedDownApple);
+            }
+        }
+
+        if(isHealSpawn && availableLanes.Count > 0 && playerMove.Health < 3 && !GameManager.Instance.isHealAppleSpawned)
+        {
+            int index = GetRandomLane(availableLanes);
+            ActivateObjectAtLane(index, ObstacleType.HealApple);
+            GameManager.Instance.isHealAppleSpawned = true;
+            isHealAppleSpawned = true;
         }
 
         // 3. ポイントの配置（障害物で使われたレーンは availableLanes から消えているため被らない）
@@ -109,6 +121,11 @@ public class ObstacleGroundController : MonoBehaviour
         for (int i = 0; i < obstacles.Length; i++)
         {
             obstacles[i].gameObject.SetActive(false);
+        }
+        if (isHealAppleSpawned)
+        {
+            GameManager.Instance.isHealAppleSpawned = false;
+            isHealAppleSpawned = false;
         }
     }
 }
