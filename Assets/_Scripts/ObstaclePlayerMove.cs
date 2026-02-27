@@ -79,6 +79,7 @@ public class ObstaclePlayerMove : MonoBehaviour
                 uiController.HealthEffect(health);
                 GameManager.Instance.comboCount = 0;
                 SpeedDown();
+                GameManager.Instance.isDamage = true;
                 if (health <= 0)
                 {
                     GameManager.Instance.Ranking(uiController);
